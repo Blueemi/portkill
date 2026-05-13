@@ -17,8 +17,6 @@ struct DampedScrollView<Content: View>: NSViewRepresentable {
     func makeNSView(context: Context) -> DampedNSScrollView {
         let scrollView = DampedNSScrollView()
         scrollView.scrollScale = scrollScale
-        scrollView.wantsLayer = true
-        scrollView.layer?.backgroundColor = NSColor.clear.cgColor
         scrollView.drawsBackground = false
         scrollView.backgroundColor = .clear
         scrollView.contentView.drawsBackground = false
@@ -33,8 +31,6 @@ struct DampedScrollView<Content: View>: NSViewRepresentable {
         scrollView.verticalPageScroll = 90
 
         let hostingView = NSHostingView(rootView: content)
-        hostingView.wantsLayer = true
-        hostingView.layer?.backgroundColor = NSColor.clear.cgColor
         hostingView.autoresizingMask = [.width]
         hostingView.frame = NSRect(origin: .zero, size: NSSize(width: 1, height: 1))
 
@@ -53,7 +49,6 @@ struct DampedScrollView<Content: View>: NSViewRepresentable {
         scrollView.backgroundColor = .clear
         scrollView.contentView.drawsBackground = false
         scrollView.contentView.backgroundColor = .clear
-        context.coordinator.hostingView?.layer?.backgroundColor = NSColor.clear.cgColor
         context.coordinator.hostingView?.rootView = content
         context.coordinator.resizeDocument(in: scrollView)
 

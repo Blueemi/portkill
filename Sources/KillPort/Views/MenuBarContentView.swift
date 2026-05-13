@@ -2,20 +2,22 @@ import AppKit
 import SwiftUI
 
 struct MenuBarContentView: View {
+    static let preferredSize = NSSize(width: 286, height: 410)
+
     @ObservedObject var store: PortMonitorStore
     let onBeforeKill: () -> Void
     @State private var hasAppeared = false
 
     var body: some View {
         VStack(spacing: 0) {
-            MenuHeaderView(store: store)
+            MenuHeaderSpacer()
 
             PortContentView(store: store, onBeforeKill: onBeforeKill)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             MenuFooterView(store: store, onBeforeKill: onBeforeKill)
         }
-        .frame(width: 286, height: 410)
+        .frame(width: Self.preferredSize.width, height: Self.preferredSize.height)
         .background {
             ZStack {
                 VisualEffectBackground()
@@ -74,54 +76,10 @@ struct MenuBarContentView: View {
     }
 }
 
-private struct MenuHeaderView: View {
-    @ObservedObject var store: PortMonitorStore
-
+private struct MenuHeaderSpacer: View {
     var body: some View {
-        HStack(spacing: 10) {
-            Image(systemName: "globe")
-                .font(PortTypography.sfPro(size: 12, weight: .medium))
-                .foregroundStyle(PortPalette.liveGreen)
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Local Ports")
-                    .font(PortTypography.sfPro(size: 11, weight: .medium))
-                    .foregroundStyle(PortPalette.secondaryText)
-
-                Text(store.statusText)
-                    .font(PortTypography.sfPro(size: 9, weight: .regular))
-                    .foregroundStyle(PortPalette.secondaryText.opacity(0.72))
-            }
-
-            Spacer()
-
-            if store.isLoading {
-                ProgressView()
-                    .controlSize(.small)
-                    .tint(PortPalette.secondaryText)
-                    .frame(width: 18, height: 18)
-            }
-
-            Button {
-                NSApplication.shared.terminate(nil)
-            } label: {
-                Image(systemName: "power")
-                    .font(PortTypography.sfPro(size: 11, weight: .regular))
-                    .foregroundStyle(PortPalette.secondaryText)
-                    .frame(width: 18, height: 18)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .help("Quit KillPort")
-        }
-        .padding(.horizontal, 12)
-        .frame(height: 38)
-        .background(PortPalette.headerTint)
-        .overlay(alignment: .bottom) {
-            Rectangle()
-                .fill(PortPalette.divider)
-                .frame(height: 1)
-        }
+        Color.clear
+            .frame(height: 4)
     }
 }
 
@@ -202,6 +160,14 @@ private struct MenuFooterView: View {
             .keyboardShortcut("k", modifiers: .command)
             .disabled(store.ports.isEmpty)
             .opacity(store.ports.isEmpty ? 0.45 : 1.0)
+
+            Button {
+                NSApplication.shared.terminate(nil)
+            } label: {
+                MenuActionRow(symbol: "power", title: "Quit", shortcut: "⌘Q")
+            }
+            .buttonStyle(.plain)
+            .keyboardShortcut("q", modifiers: .command)
         }
         .padding(.bottom, 5)
         .background(PortPalette.footerTint)

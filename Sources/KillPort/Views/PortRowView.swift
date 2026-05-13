@@ -62,7 +62,6 @@ struct LiveDot: View {
         Circle()
             .fill(PortPalette.liveGreen)
             .frame(width: 6, height: 6)
-            .shadow(color: PortPalette.liveGreen.opacity(0.75), radius: 3)
     }
 }
 

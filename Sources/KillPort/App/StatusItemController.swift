@@ -29,7 +29,8 @@ final class StatusItemController: NSObject, NSMenuDelegate, NSPopoverDelegate {
 
     private func configurePopover() {
         popover.behavior = .transient
-        popover.animates = true
+        popover.animates = false
+        popover.contentSize = MenuBarContentView.preferredSize
         popover.delegate = self
 
         let hostingController = NSHostingController(
@@ -42,8 +43,6 @@ final class StatusItemController: NSObject, NSMenuDelegate, NSPopoverDelegate {
                 .environment(\.colorScheme, .dark)
         )
         hostingController.view.appearance = NSAppearance(named: .darkAqua)
-        hostingController.view.wantsLayer = true
-        hostingController.view.layer?.backgroundColor = NSColor.clear.cgColor
         popover.contentViewController = hostingController
     }
 
