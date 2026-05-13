@@ -92,7 +92,7 @@ private struct PortContentView: View {
             if store.ports.isEmpty {
                 EmptyPortsView(isLoading: store.isLoading)
             } else {
-                DampedScrollView(scrollScale: 0.28) {
+                DampedScrollView(scrollScale: 0.82) {
                     VStack(spacing: 0) {
                         ForEach(store.ports) { entry in
                             PortRowView(entry: entry) {

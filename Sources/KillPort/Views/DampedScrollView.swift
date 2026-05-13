@@ -5,7 +5,7 @@ struct DampedScrollView<Content: View>: NSViewRepresentable {
     let scrollScale: CGFloat
     private let content: Content
 
-    init(scrollScale: CGFloat = 0.34, @ViewBuilder content: () -> Content) {
+    init(scrollScale: CGFloat = 0.82, @ViewBuilder content: () -> Content) {
         self.scrollScale = scrollScale
         self.content = content()
     }
@@ -77,7 +77,7 @@ struct DampedScrollView<Content: View>: NSViewRepresentable {
 }
 
 final class DampedNSScrollView: NSScrollView {
-    var scrollScale: CGFloat = 0.34
+    var scrollScale: CGFloat = 0.82
     var onLayout: ((DampedNSScrollView) -> Void)?
 
     override func layout() {
