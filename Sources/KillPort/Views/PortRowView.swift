@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 struct PortRowView: View {
@@ -8,19 +9,23 @@ struct PortRowView: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            LiveDot()
+            HStack(spacing: 10) {
+                LiveDot()
 
-            Text(verbatim: entry.portLabel)
-                .font(PortTypography.sfPro(size: 14, weight: .medium))
-                .foregroundStyle(PortPalette.primaryText)
-                .lineLimit(1)
-                .frame(width: 66, alignment: .leading)
+                Text(verbatim: entry.portLabel)
+                    .font(PortTypography.sfPro(size: 14, weight: .medium))
+                    .foregroundStyle(PortPalette.primaryText)
+                    .lineLimit(1)
+                    .frame(width: 66, alignment: .leading)
 
-            Text(entry.displayName)
-                .font(PortTypography.sfPro(size: 12, weight: .medium))
-                .foregroundStyle(PortPalette.primaryText)
-                .lineLimit(1)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                Text(entry.displayName)
+                    .font(PortTypography.sfPro(size: 12, weight: .medium))
+                    .foregroundStyle(PortPalette.primaryText)
+                    .lineLimit(1)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .contentShape(Rectangle())
+            .onTapGesture(perform: openPortInBrowser)
 
             ZStack(alignment: .trailing) {
                 Text(entry.pidLabel)
@@ -54,6 +59,13 @@ struct PortRowView: View {
             Button("Kill PID \(entry.pid)", role: .destructive, action: onKill)
             Text(entry.endpoint)
         }
+    }
+
+    private func openPortInBrowser() {
+        guard let url = URL(string: "http://localhost:\(entry.port)") else {
+            return
+        }
+        NSWorkspace.shared.open(url)
     }
 }
 
