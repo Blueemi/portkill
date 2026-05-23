@@ -5,7 +5,8 @@ export function localEndpoint(endpoint: string): string {
 }
 
 export function portDetailSubtitle(entry: PortProcess): string {
-  return `Port ${entry.port} · PID ${entry.pid} · ${entry.protocolName}`;
+  const endpoint = localEndpoint(entry.endpoint);
+  return `:${entry.port} · PID ${entry.pid} · ${endpoint}`;
 }
 
 export function statusSummary(portCount: number, processCount: number, isLoading: boolean): string {

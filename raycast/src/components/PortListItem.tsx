@@ -8,9 +8,11 @@ type PortListItemProps = {
   onKill: (entry: PortProcess) => void;
   onRefresh: () => void;
   onKillAll: () => void;
+  isShowingDetail: boolean;
+  onToggleDetail: () => void;
 };
 
-export function PortListItem({ entry, onKill, onRefresh, onKillAll }: PortListItemProps) {
+export function PortListItem({ entry, onKill, onRefresh, onKillAll, isShowingDetail, onToggleDetail }: PortListItemProps) {
   const endpoint = localEndpoint(entry.endpoint);
 
   return (
@@ -46,6 +48,12 @@ export function PortListItem({ entry, onKill, onRefresh, onKillAll }: PortListIt
             onAction={() => onKill(entry)}
           />
           <ActionPanel.Section>
+            <Action
+              title={isShowingDetail ? "Hide Details" : "Show Details"}
+              icon={Icon.Sidebar}
+              onAction={onToggleDetail}
+              shortcut={{ modifiers: ["cmd", "shift"], key: "d" }}
+            />
             <Action
               title="Refresh"
               icon={Icon.ArrowClockwise}

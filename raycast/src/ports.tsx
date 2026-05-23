@@ -12,7 +12,17 @@ const sharedShortcuts = {
   killAll: { modifiers: ["cmd"] as const, key: "k" as const },
 };
 
-function ListActions({ onRefresh, onKillAll }: { onRefresh: () => void; onKillAll: () => void }) {
+function ListActions({
+  onRefresh,
+  onKillAll,
+  isShowingDetail,
+  onToggleDetail,
+}: {
+  onRefresh: () => void;
+  onKillAll: () => void;
+  isShowingDetail: boolean;
+  onToggleDetail: () => void;
+}) {
   return (
     <ActionPanel>
       <Action title="Refresh" icon={Icon.ArrowClockwise} onAction={onRefresh} shortcut={sharedShortcuts.refresh} />
@@ -23,6 +33,14 @@ function ListActions({ onRefresh, onKillAll }: { onRefresh: () => void; onKillAl
         onAction={onKillAll}
         shortcut={sharedShortcuts.killAll}
       />
+      <ActionPanel.Section>
+        <Action
+          title={isShowingDetail ? "Hide Details" : "Show Details"}
+          icon={Icon.Sidebar}
+          onAction={onToggleDetail}
+          shortcut={{ modifiers: ["cmd", "shift"], key: "d" }}
+        />
+      </ActionPanel.Section>
     </ActionPanel>
   );
 }
@@ -31,6 +49,7 @@ export default function Command() {
   const [ports, setPorts] = useState<PortProcess[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isShowingDetail, setIsShowingDetail] = useState(false);
 
   const refresh = useCallback(async () => {
     setIsLoading(true);
@@ -114,7 +133,14 @@ export default function Command() {
     }
   }
 
-  const listActions = <ListActions onRefresh={refresh} onKillAll={handleKillAll} />;
+  const listActions = (
+    <ListActions
+      onRefresh={refresh}
+      onKillAll={handleKillAll}
+      isShowingDetail={isShowingDetail}
+      onToggleDetail={() => setIsShowingDetail((showing) => !showing)}
+    />
+  );
 
   const emptyTitle = error ? "Could not scan ports" : isLoading ? "Scanning…" : "All quiet";
   const emptyDescription = error ?? (isLoading ? "Checking TCP listeners on this Mac." : "No TCP ports are listening.");
@@ -124,7 +150,7 @@ export default function Command() {
       isLoading={isLoading}
       searchBarPlaceholder="Search port, app, or PID…"
       actions={listActions}
-      isShowingDetail={ports.length > 0}
+      isShowingDetail={isShowingDetail}
     >
       <List.EmptyView
         icon={error ? Icon.ExclamationMark : isLoading ? Icon.Circle : Icon.CheckCircle}
@@ -145,6 +171,8 @@ export default function Command() {
             onKill={handleKill}
             onRefresh={refresh}
             onKillAll={handleKillAll}
+            isShowingDetail={isShowingDetail}
+            onToggleDetail={() => setIsShowingDetail((showing) => !showing)}
           />
         ))}
       </List.Section>
