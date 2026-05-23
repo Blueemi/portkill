@@ -1,25 +1,48 @@
-# KillPort
+# Kill Port
 
-KillPort is a tiny macOS menu bar utility for finding local TCP listeners and stopping the process attached to a port.
+Kill Port finds local TCP listeners and stops the process bound to a port. It targets the “what is using port 3000?” moment: scan active listeners and kill the process without hand-rolling `lsof` and `kill`.
 
-It is built for the "what is using port 3000?" moment: open the menu bar item, scan active listening ports, and kill the process without dropping into `lsof`/`kill` by hand.
+This repository ships **two macOS clients** that share the same behavior (scan via `lsof`, SIGTERM then SIGKILL):
 
-## Features
+| Client | Location | Best for |
+| ------ | -------- | -------- |
+| **Menu bar app** | `Sources/` | Always-available globe icon in the menu bar |
+| **Raycast extension** | `raycast/` | Launcher-first workflow inside Raycast |
+
+Pick whichever fits how you work; you do not need both running at once.
+
+## Features (both clients)
 
 - Lists local TCP listeners using `lsof`
 - Shows port, process name, PID, and endpoint details
-- Kills a single process from the port list
-- Supports `Kill All` for every unique listed PID
-- Runs as a menu-bar-only app with no Dock icon
-- Provides a right-click menu bar `Quit` action
+- Kills a single process from the list
+- **Kill All** stops every unique PID (with confirmation)
+- Sends `SIGTERM` first, waits briefly, then `SIGKILL` if the process is still alive
 
 ## Requirements
 
 - macOS 14 or newer
-- Swift 5.9 or newer
-- Xcode command line tools
+- For the menu bar app: Swift 5.9+ and Xcode Command Line Tools
+- For the Raycast extension: [Raycast](https://raycast.com) and Node.js 18+
 
-## Build And Run
+## Repository layout
+
+```text
+killportapp/
+├── Sources/KillPort/     # Swift menu bar app
+├── raycast/              # Raycast extension (TypeScript)
+├── script/               # Menu bar build & run helpers
+├── Package.swift         # SwiftPM manifest
+└── dist/                 # Generated KillPort.app (gitignored)
+```
+
+---
+
+## Menu bar app
+
+A menu-bar-only utility (no Dock icon). Look for the **globe** icon after launch.
+
+### Build and run
 
 From the repo root:
 
@@ -27,38 +50,31 @@ From the repo root:
 ./script/build_and_run.sh
 ```
 
-The script builds the SwiftPM executable, creates `dist/KillPort.app`, and opens it. The generated app bundle is ignored by Git and can be deleted safely.
+This builds with SwiftPM, creates `dist/KillPort.app`, and opens it. The bundle is gitignored and safe to delete.
 
-You can also build directly with SwiftPM:
+Other modes:
+
+```bash
+./script/build_and_run.sh --verify   # build, launch, confirm process is running
+./script/build_and_run.sh --debug    # run binary under lldb
+./script/build_and_run.sh --logs     # launch and stream unified logs
+```
+
+Build only with SwiftPM:
 
 ```bash
 swift build
-```
-
-For a release build:
-
-```bash
 swift build -c release
 ```
 
-## Usage
+### Usage
 
-- `Refresh` (`Command-R`) rescans listening TCP ports.
-- Hover a row and press the red `x` to stop that process.
-- `Kill All` (`Command-K`) asks for confirmation before stopping every listed unique PID.
-- Right-click the menu bar icon to open a `Quit` menu.
+- **Refresh** (`⌘R`) — rescan listening TCP ports
+- Hover a row and click the red **×** — stop that process
+- **Kill All** (`⌘K`) — confirm, then stop every listed unique PID
+- Right-click the menu bar icon — **Quit**
 
-KillPort is intentionally menu-bar-only. If you do not see a window after launching, look for the globe icon in the macOS menu bar.
-
-## Safety Notes
-
-KillPort sends `SIGTERM` first, waits briefly, then sends `SIGKILL` if the process is still alive. This is useful for stuck local dev servers, but it can force-quit work in any process shown in the list.
-
-Only kill processes you recognize.
-
-## Development
-
-Common checks:
+### Development
 
 ```bash
 swift build
@@ -66,8 +82,66 @@ swift build -c release
 ./script/build_and_run.sh --verify
 ```
 
-There is currently no test target, so `swift test` will report that no tests were found.
+There is no test target yet; `swift test` reports no tests.
 
-## Distribution Status
+---
 
-The local build script creates an unsigned/ad-hoc signed app bundle for development use. There is not currently a notarized release build or packaged installer.
+## Raycast extension
+
+A [Raycast](https://raycast.com) command that lists listeners in Raycast’s UI, with a detail panel for full endpoint info.
+
+See also [`raycast/README.md`](raycast/README.md) for extension-specific notes.
+
+### Install on your Mac
+
+**Development (quickest to try):**
+
+```bash
+cd raycast
+npm install
+npm run dev
+```
+
+Leave the terminal running, open Raycast, and run **Kill Port**.
+
+**Import into Raycast (stays installed without `npm run dev`):**
+
+```bash
+cd raycast
+npm install
+npm run build
+```
+
+In Raycast: **Manage Extensions** → **+** → **Import Extension** → select the `raycast/` folder (the one containing `package.json`).
+
+Before publishing or running `npm run lint`, set `"author"` in `raycast/package.json` to your [Raycast account](https://raycast.com) username.
+
+### Usage
+
+- Search filters by port, app name, or PID
+- **Refresh** (`⌘R`) — rescan
+- **Kill All** (`⌘K`) — confirm, then stop every unique PID
+- **Kill Process** — on the selected row
+- Open the detail pane for full endpoint / connection metadata
+
+### Development
+
+```bash
+cd raycast
+npm install
+npm run dev          # hot reload
+npm run build        # production build
+npm run lint         # requires valid Raycast author in package.json
+npm run fix-lint
+```
+
+---
+
+## Safety
+
+Kill Port can force-quit any process it lists. That is useful for stuck dev servers, but destructive if you kill the wrong thing. **Only stop processes you recognize.**
+
+## Distribution
+
+- **Menu bar app:** `script/build_and_run.sh` produces an unsigned, ad-hoc signed app bundle for local use. There is no notarized installer yet.
+- **Raycast extension:** import the `raycast/` folder locally, or follow Raycast’s store guidelines if you publish it.
