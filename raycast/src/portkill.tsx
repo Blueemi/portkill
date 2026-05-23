@@ -1,14 +1,4 @@
-import {
-  Action,
-  ActionPanel,
-  Alert,
-  Icon,
-  Keyboard,
-  List,
-  confirmAlert,
-  showToast,
-  Toast,
-} from "@raycast/api";
+import { Action, ActionPanel, Alert, Icon, Keyboard, List, confirmAlert, showToast, Toast } from "@raycast/api";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { PortListItem } from "./components/PortListItem";
