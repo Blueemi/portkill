@@ -12,7 +12,14 @@ type PortListItemProps = {
   onToggleDetail: () => void;
 };
 
-export function PortListItem({ entry, onKill, onRefresh, onKillAll, isShowingDetail, onToggleDetail }: PortListItemProps) {
+export function PortListItem({
+  entry,
+  onKill,
+  onRefresh,
+  onKillAll,
+  isShowingDetail,
+  onToggleDetail,
+}: PortListItemProps) {
   const endpoint = localEndpoint(entry.endpoint);
 
   return (

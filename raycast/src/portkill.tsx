@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { PortListItem } from "./components/PortListItem";
 import { statusSummary } from "./lib/format";
+import { getKillMethodDescription, getPlatformLabel } from "./lib/platform";
 import { killProcess, killProcesses } from "./lib/process-killer";
 import { PortScannerError, scanPorts } from "./lib/port-scanner";
 import type { PortProcess } from "./lib/types";
@@ -50,6 +51,8 @@ export default function Command() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isShowingDetail, setIsShowingDetail] = useState(false);
+  const killMethodDescription = getKillMethodDescription();
+  const platformLabel = getPlatformLabel();
 
   const refresh = useCallback(async () => {
     setIsLoading(true);
@@ -83,7 +86,7 @@ export default function Command() {
   async function handleKill(entry: PortProcess) {
     const confirmed = await confirmAlert({
       title: `Kill ${entry.processName}?`,
-      message: `Port ${entry.port}, PID ${entry.pid}. Sends SIGTERM first, then SIGKILL if still alive.`,
+      message: `Port ${entry.port}, PID ${entry.pid}. ${killMethodDescription}`,
       primaryAction: { title: "Kill Process", style: Alert.ActionStyle.Destructive },
     });
 
@@ -112,7 +115,7 @@ export default function Command() {
     const killTitle = targets.length === 1 ? "Kill 1 Process" : `Kill ${targets.length} Processes`;
     const confirmed = await confirmAlert({
       title: "Kill all listed processes?",
-      message: "SIGTERM first, then SIGKILL for anything still running.",
+      message: killMethodDescription,
       primaryAction: { title: killTitle, style: Alert.ActionStyle.Destructive },
     });
 
@@ -143,7 +146,8 @@ export default function Command() {
   );
 
   const emptyTitle = error ? "Could not scan ports" : isLoading ? "Scanning…" : "All quiet";
-  const emptyDescription = error ?? (isLoading ? "Checking TCP listeners on this Mac." : "No TCP ports are listening.");
+  const emptyDescription =
+    error ?? (isLoading ? `Checking TCP listeners on ${platformLabel}.` : "No TCP ports are listening.");
 
   return (
     <List

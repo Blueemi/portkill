@@ -1,19 +1,19 @@
-# Kill Port
+# PortKill
 
-Kill Port finds local TCP listeners and stops the process bound to a port. It targets the “what is using port 3000?” moment: scan active listeners and kill the process without hand-rolling `lsof` and `kill`.
+PortKill finds local TCP listeners and stops the process bound to a port. It targets the “what is using port 3000?” moment: scan active listeners and kill the process without hand-rolling `lsof`/`netstat` and `kill`/`taskkill`.
 
-This repository ships **two macOS clients** that share the same behavior (scan via `lsof`, SIGTERM then SIGKILL):
+This repository ships **two clients**:
 
 | Client | Location | Best for |
 | ------ | -------- | -------- |
-| **Menu bar app** | `Sources/` | Always-available globe icon in the menu bar |
-| **Kill a Port** (Raycast) | `raycast/` | Launcher-first workflow inside Raycast |
+| **Menu bar app** (macOS) | `Sources/` | Always-available globe icon in the menu bar |
+| **PortKill** (Raycast) | `raycast/` | Launcher-first workflow inside Raycast (macOS, Windows, Linux) |
 
 Pick whichever fits how you work; you do not need both running at once.
 
-## Features (both clients)
+## Features
 
-- Lists local TCP listeners using `lsof`
+- Lists local TCP listeners (platform-specific tooling in the Raycast extension; `lsof` on the menu bar app)
 - Shows port, process name, PID, and endpoint details
 - Kills a single process from the list
 - **Kill All** stops every unique PID (with confirmation)
@@ -88,11 +88,11 @@ There is no test target yet; `swift test` reports no tests.
 
 ## Raycast extension
 
-A [Raycast](https://raycast.com) command that lists listeners in Raycast’s UI, with a detail panel for full endpoint info.
+A [Raycast](https://raycast.com) command that lists listeners in Raycast’s UI, with a detail panel for full endpoint info. Supports **macOS**, **Windows**, and **Linux** (see `raycast/README.md` for per-OS tooling).
 
 See also [`raycast/README.md`](raycast/README.md) for extension-specific notes.
 
-### Install on your Mac
+### Install locally
 
 **Development (quickest to try):**
 
@@ -102,7 +102,7 @@ npm install
 npm run dev
 ```
 
-Leave the terminal running, open Raycast, and run **Kill a Port**.
+Leave the terminal running, open Raycast, and run **PortKill**.
 
 **Import into Raycast (stays installed without `npm run dev`):**
 
@@ -139,9 +139,9 @@ npm run fix-lint
 
 ## Safety
 
-Kill Port can force-quit any process it lists. That is useful for stuck dev servers, but destructive if you kill the wrong thing. **Only stop processes you recognize.**
+PortKill can force-quit any process it lists. That is useful for stuck dev servers, but destructive if you kill the wrong thing. **Only stop processes you recognize.**
 
 ## Distribution
 
 - **Menu bar app:** `script/build_and_run.sh` produces an unsigned, ad-hoc signed app bundle for local use. There is no notarized installer yet.
-- **Raycast extension:** import the `raycast/` folder locally, or follow Raycast’s store guidelines if you publish it.
+- **Raycast extension:** import the `raycast/` folder locally, or run `npm run publish` in `raycast/` to open a Store pull request (see [Raycast publishing docs](https://developers.raycast.com/basics/publish-an-extension)).

@@ -13,12 +13,12 @@ type ExtensionPreferences = {}
 declare type Preferences = ExtensionPreferences
 
 declare namespace Preferences {
-  /** Preferences accessible in the `ports` command */
-  export type Ports = ExtensionPreferences & {}
+  /** Preferences accessible in the `portkill` command */
+  export type Portkill = ExtensionPreferences & {}
 }
 
 declare namespace Arguments {
-  /** Arguments passed to the `ports` command */
-  export type Ports = {}
+  /** Arguments passed to the `portkill` command */
+  export type Portkill = {}
 }
 
