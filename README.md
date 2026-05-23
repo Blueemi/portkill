@@ -7,7 +7,7 @@ This repository ships **two macOS clients** that share the same behavior (scan v
 | Client | Location | Best for |
 | ------ | -------- | -------- |
 | **Menu bar app** | `Sources/` | Always-available globe icon in the menu bar |
-| **Raycast extension** | `raycast/` | Launcher-first workflow inside Raycast |
+| **Kill a Port** (Raycast) | `raycast/` | Launcher-first workflow inside Raycast |
 
 Pick whichever fits how you work; you do not need both running at once.
 
@@ -102,7 +102,7 @@ npm install
 npm run dev
 ```
 
-Leave the terminal running, open Raycast, and run **Kill Port**.
+Leave the terminal running, open Raycast, and run **Kill a Port**.
 
 **Import into Raycast (stays installed without `npm run dev`):**
 

@@ -1,4 +1,4 @@
-# Kill Port — Raycast extension
+# Kill a Port — Raycast extension
 
 Part of the [Kill Port](../README.md) repo. The menu bar app lives in `Sources/`; this folder is the Raycast extension.
 
@@ -12,7 +12,7 @@ npm install
 npm run dev
 ```
 
-3. Open Raycast and run **Kill Port**.
+3. Open Raycast and run **Kill a Port**.
 
 To install without a dev terminal: `npm run build`, then **Manage Extensions** → **Import Extension** and choose this folder.
 
